@@ -1,0 +1,34 @@
+[build-system]
+requires = ["setuptools>=68.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "credit-risk"
+version = "1.0.0"
+description = "Clean, leak-free Stage-4 Home Credit Default Risk modeling pipeline (EDA notebook + production CLI)"
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+    "numpy>=1.26.0",
+    "pandas>=2.2.0",
+    "scipy>=1.12.0",
+    "scikit-learn>=1.5.0",
+    "lightgbm>=4.3.0",
+    "xgboost>=2.1.0",
+    "pyyaml>=6.0.1",
+    "joblib>=1.4.0",
+]
+
+[project.optional-dependencies]
+viz = ["matplotlib>=3.8.0", "seaborn>=0.13.0", "jupyter>=1.0.0"]
+dev = ["pytest>=8.0.0", "ruff>=0.6.0"]
+
+[project.scripts]
+credit-risk = "credit_risk.pipeline:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["src"]

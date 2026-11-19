@@ -1,0 +1,30 @@
+# Python & Virtual Environments
+__pycache__/
+*.py[cod]
+*$py.class
+.venv/
+venv/
+env/
+*.egg-info/
+dist/
+build/
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Data, Model Artifacts & Predictions (do not commit raw datasets or large binaries)
+data/
+artifacts/
+outputs/
+*.csv
+*.parquet
+*.joblib
+*.zip
+*.xlsx
+
+# OS & Editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+.pytest_cache/

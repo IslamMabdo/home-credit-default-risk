@@ -1,0 +1,88 @@
+# Production Pipeline Configuration — Home Credit Default Risk (Stage 4)
+seed: 42
+n_splits: 5
+
+paths:
+  train_csv: "data/train.csv"
+  test_csv: "data/test.csv"
+  artifact_dir: "artifacts"
+  output_csv: "outputs/submission.csv"
+
+features:
+  # Target-free OOF regression imputation for EXT_SOURCE_1/2/3
+  use_ext_imputation: true
+  ext_imputer_params:
+    objective: "regression"
+    learning_rate: 0.03
+    num_leaves: 63
+    max_bin: 511
+    min_child_samples: 60
+    subsample: 0.8
+    subsample_freq: 1
+    colsample_bytree: 0.7
+    cat_smooth: 50.0
+    reg_alpha: 1.0
+    reg_lambda: 5.0
+    n_estimators: 2000
+    early_stopping_rounds: 60
+
+  # Smoothed nested-OOF target encoding smoothing weights (m-estimate)
+  te_smoothing:
+    EXACT_GOODS: 80.0
+    EXACT_CREDIT: 80.0
+    ATC_4: 60.0
+    CTG_3: 80.0
+    CTA_1: 100.0
+    PROD_SIG_COARSE: 80.0
+    CTA1_CTG3: 80.0
+    OCC_REGION: 100.0
+    ORG_REGION: 120.0
+    GENDER_EDU: 120.0
+    REGION_POP: 120.0
+
+model:
+  # Options: "xgboost", "lightgbm", or "blend" (50/50 logit blend of XGB + LGB)
+  type: "xgboost"
+  use_gpu: true
+
+  xgboost:
+    objective: "binary:logistic"
+    eval_metric: "auc"
+    tree_method: "hist"
+    enable_categorical: true
+    max_cat_to_onehot: 4
+    max_cat_threshold: 32
+    learning_rate: 0.015
+    max_depth: 4
+    min_child_weight: 100
+    max_bin: 512
+    subsample: 0.8
+    colsample_bytree: 0.25
+    colsample_bylevel: 0.7
+    reg_alpha: 8.0
+    reg_lambda: 50.0
+    gamma: 0.2
+    n_estimators: 6000
+    early_stopping_rounds: 150
+
+  lightgbm:
+    objective: "binary"
+    metric: "auc"
+    learning_rate: 0.02
+    num_leaves: 20
+    max_depth: 5
+    max_bin: 511
+    min_child_samples: 250
+    subsample: 0.8
+    subsample_freq: 1
+    colsample_bytree: 0.25
+    cat_smooth: 120.0
+    reg_alpha: 10.0
+    reg_lambda: 50.0
+    min_split_gain: 0.05
+    n_estimators: 5000
+    early_stopping_rounds: 120
+
+evaluation:
+  bootstrap_samples: 500
+  decision_threshold: 0.15
